@@ -49,4 +49,4 @@ Para confirmar que nuestros comandos están correctos, accedemos a la consola de
 Para ejecutar el programa como corresponde, sustituye el path en las constantes del archivo *scraper.py*.
 
 # Créditos
-* [Lucas Oliveri](https://www.linkedin.com/in/oliverilucas) - 2022
+* [Lucas Oliveri](https://www.linkedin.com/in/oliverilucas) - (oliverilucas@gmail.com)
