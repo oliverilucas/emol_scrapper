@@ -4,7 +4,6 @@ import os
 import datetime
 import requests
 import lxml.html as html
-import pathlib
 
 #Declaro algunas constantes
 #La web de noticias
@@ -56,9 +55,6 @@ def parse_notice(link, today, i, k):
     except ConnectionError as con:
         pass
 
-
-
-
 #Función para extraer el link de las noticias
 def parse_home():
     try:
@@ -88,9 +84,6 @@ def parse_home():
             if not os.path.isdir(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today):
                 os.mkdir(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today)
 
-            #for link in link_to_notices:
-            #    parse_notice(link, today, len(link_to_notices), link_to_notices.index(link_to_notices[link]))
-            
             for link in range(0, len(link_to_notices)-1):
                 parse_notice(link_to_notices[link], today, len(link_to_notices), link)
 
