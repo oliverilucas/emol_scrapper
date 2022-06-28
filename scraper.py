@@ -64,43 +64,32 @@ def parse_home():
     try:
         #Accede la página web. Devolverá 200 si se conecta correctamente.
         response = requests.get(HOME_URL)
-
         if response.status_code == 200:
-            
             #Obtiene el código fuente de la página accedida.
             home = response.content.decode('utf-8')
-
             #Toma el contenido HTML y lo transforma en un documento especial donde puedo hacer XPath
             parsed = html.fromstring(home)
-
             #Obtengo una lista de todos las HTTP de las noticias
             link_to_notices = parsed.xpath(XPATH_LINK_TO_ARTICLE)
             link_to_notices = list(map(lambda x: HOME_URL + x.replace("https://www.emol.com", ""), link_to_notices))
-
-            ######
-            # Crea una carpeta del día
+            # Crea una carpeta con el nombre del día
             today = datetime.date.today().strftime('%d-%m-%Y')
-            
-            #Pregunta: Existe una carpeta llamada con la fecha de hoy?
+            #Verifica si existe la carpeta de origen:
             if not os.path.isdir('news'):
                 os.mkdir('news')
-            path = os.path.dirname(os.path.abspath(__file__)) + "/news/" + today
+            #Verifica si existe la carpeta con el nombre del día:
             if not os.path.isdir(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today):
                 os.mkdir(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today)
-
             for link in range(0, len(link_to_notices)-1):
                 parse_notice(link_to_notices[link], today, len(link_to_notices), link)
-
         else:
             #Elevamos un error si la página no contesta
             raise ValueError(f'Error: {response.status_code}')
-
     except ValueError as ve:
         print(ve)
     
 def run():
     parse_home()
-
 
 if __name__ == '__main__':
     run()
