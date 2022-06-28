@@ -37,17 +37,22 @@ def parse_notice(link, today, i, k):
             except IndexError:
                 #Si encuentra alguna noticia que no tiene Summary o Title (fuera del index), no guarda la noticia:
                 return
-            #Guardamos el archivo
-            print(f"Descargando noticia {k+1} de {i-1} ({round((k+1)/(i-1)*100,1)}% completado): \n {title} \n ({link}) \n")
-            with open(f'news/{today}/{title}.txt', 'w', encoding='utf-8') as f:
-                f.write(title)
-                f.write('\n\n')
-                f.write(summary)
-                f.write('\n\n')
-                for p in body:
-                    if p.find("RelacionadaDetalle") == 0:
-                        continue
-                    f.write(p)
+            #Panel de información
+            print(f"Descargando noticia {k+1} de {i-1} ({round((k+1)/(i-1)*100,1)}% completado): \n {title} \n ({link})")
+            #Verifica si la noticia ya fue descargada:
+            if os.path.isfile(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today + "/" + title + ".txt"):
+                print(f"(!) Esta noticia ya está guardada en el directorio.\n\n")
+            else:
+                #Guarda el archivo
+                with open(f'news/{today}/{title}.txt', 'w', encoding='utf-8') as f:
+                    f.write(title)
+                    f.write('\n\n')
+                    f.write(summary)
+                    f.write('\n\n')
+                    for p in body:
+                        if p.find("RelacionadaDetalle") == 0:
+                            continue
+                        f.write(p)
         else:
             raise ValueError(f'Error: {response.status_code}')
     except ValueError as ve:
