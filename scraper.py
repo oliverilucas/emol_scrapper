@@ -5,10 +5,9 @@ import datetime
 import requests
 import lxml.html as html
 
-#Declaro algunas constantes
-#La web de noticias
+#Se declara la web de noticias
 HOME_URL = 'https://www.emol.com'
-#Las rutas XPath:
+#Se declaran las rutas XPath:
 XPATH_LINK_TO_ARTICLE = '//h3/a/@href'
 XPATH_TITLE = '//div/h1/text()'
 XPATH_SUMMARY = '//div/h2/text()'
