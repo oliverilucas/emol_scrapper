@@ -79,13 +79,13 @@ def parse_home():
             link_to_notices = list(map(lambda x: HOME_URL + x.replace("https://www.emol.com", ""), link_to_notices))
 
             ######
-            # Crea una carpeta del día
+            # Crea una carpeta con el nombre del día
             today = datetime.date.today().strftime('%d-%m-%Y')
             
-            #Pregunta: Existe una carpeta llamada con la fecha de hoy?
+            #Verifica si existe la carpeta de origen:
             if not os.path.isdir('news'):
                 os.mkdir('news')
-            path = os.path.dirname(os.path.abspath(__file__)) + "/news/" + today
+            #Verifica si existe la carpeta con el nombre del día:
             if not os.path.isdir(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today):
                 os.mkdir(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today)
 
