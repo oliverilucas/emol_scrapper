@@ -16,9 +16,8 @@ XPATH_SUMMARY = '//div/h2/text()'
 XPATH_BODY = "/html/body[@class='cont_fs_gale_f']/div[@id='contentenedor']/div[@id='LadoA']/div[@id='cont_iz_creditos']/div[@id='cont_iz_cuerpo']/div[@id='texto_noticia']/div[@id='cuDetalle_cuTexto_textoNoticia']/div//text()"
 link_to_notices = []
 
-
 #Accedemos a las noticias
-def parse_notice(link, today):
+def parse_notice(link, today, i, k):
     try:
         response = requests.get(link)
         if response.status_code == 200:
@@ -26,9 +25,12 @@ def parse_notice(link, today):
             parsed = html.fromstring(notice)
             try:
                 #Elementos de la noticia
-                #Obtiene el título. Si el título tiene comillas las elimina por precaución.
+                #Obtiene el título. Si el título tiene elementos especiales los elimina porque los archivos no pueden llevar carácteres especiales.
                 title = parsed.xpath(XPATH_TITLE)[0]
-                title = title.replace('\"','')
+                title = title.replace('\"','-')
+                title = title.replace(':','-')
+                title = title.replace('$','-')
+                title = title.replace('/','-')
                 #Obtiene el resumen
                 summary = parsed.xpath(XPATH_SUMMARY)[1]
                 #Obtiene el cuerpo
@@ -37,6 +39,7 @@ def parse_notice(link, today):
                 #Si encuentra alguna noticia que no tiene Summary o Title (fuera del index), no guarda la noticia:
                 return
             #Guardamos el archivo
+            print(f"Descargando noticia {k+1} de {i-1} ({round((k+1)/(i-1)*100,1)}% completado): \n {title} \n ({link}) \n")
             with open(f'news/{today}/{title}.txt', 'w', encoding='utf-8') as f:
                 f.write(title)
                 f.write('\n\n')
@@ -50,13 +53,15 @@ def parse_notice(link, today):
             raise ValueError(f'Error: {response.status_code}')
     except ValueError as ve:
         pass
+    except ConnectionError as con:
+        pass
+
 
 
 
 #Función para extraer el link de las noticias
 def parse_home():
     try:
-
         #Accede la página web. Devolverá 200 si se conecta correctamente.
         response = requests.get(HOME_URL)
 
@@ -69,11 +74,8 @@ def parse_home():
             parsed = html.fromstring(home)
 
             #Obtengo una lista de todos las HTTP de las noticias
-            link_to_notices_a = parsed.xpath(XPATH_LINK_TO_ARTICLE)
-            #Hago una pequeña transformación, puesto que los links vienen sin el HOME.
-            for link in link_to_notices_a:
-                link_to_notices.append(HOME_URL + str(link))
-            
+            link_to_notices = parsed.xpath(XPATH_LINK_TO_ARTICLE)
+            link_to_notices = list(map(lambda x: HOME_URL + x.replace("https://www.emol.com", ""), link_to_notices))
 
             ######
             # Crea una carpeta del día
@@ -86,12 +88,11 @@ def parse_home():
             if not os.path.isdir(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today):
                 os.mkdir(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today)
 
-            for link in link_to_notices:
-                parse_notice(link, today)
+            #for link in link_to_notices:
+            #    parse_notice(link, today, len(link_to_notices), link_to_notices.index(link_to_notices[link]))
             
-
-
-
+            for link in range(0, len(link_to_notices)-1):
+                parse_notice(link_to_notices[link], today, len(link_to_notices), link)
 
         else:
             #Elevamos un error si la página no contesta
