@@ -46,7 +46,7 @@ def parse_notice(link, today, i, k):
                 print(f"(!) Esta noticia ya está guardada en el directorio.\n\n")
             else:
                 #Guarda el archivo
-                print("\n\n")
+                print("\n")
                 with open(f'news/{today}/{title}.txt', 'w', encoding='utf-8') as f:
                     f.write(title)
                     f.write('\n\n')
