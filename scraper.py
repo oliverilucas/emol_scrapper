@@ -8,6 +8,7 @@ import os
 import datetime
 import requests
 import lxml.html as html
+import bs4
 
 #Se declara la web de noticias
 HOME_URL = 'https://www.emol.com'
