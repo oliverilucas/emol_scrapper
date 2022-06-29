@@ -1,3 +1,6 @@
+#Version 1.0
+#Lucas Oliveri - oliverilucas@gmail.com
+
 from asyncio.proactor_events import _ProactorBaseWritePipeTransport
 from multiprocessing.sharedctypes import Value
 import os
