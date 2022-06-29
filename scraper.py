@@ -1,5 +1,6 @@
 #Version 1.0
 #Lucas Oliveri - oliverilucas@gmail.com
+#Prueba de migración a Beautiful Soup
 
 from asyncio.proactor_events import _ProactorBaseWritePipeTransport
 from multiprocessing.sharedctypes import Value
