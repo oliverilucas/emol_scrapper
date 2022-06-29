@@ -1,13 +1,8 @@
-# Version 2.0
-# Lucas Oliveri - oliverilucas@gmail.com
-# Prueba de migración a Beautiful Soup
-
 import os
 import datetime
 import requests
 import bs4
 
-# Se declara la web de noticias
 HOME_URL = 'https://www.emol.com'
 BS_LINKS_TO_ARTICLE = ["h1 a", "h3 a"]
 BS_TITLE = 'div h1'
@@ -79,7 +74,7 @@ def get_links():
                 for link in soup.select(BS_LINKS_TO_ARTICLE[i]):
                     bs_link_to_notices.append(link.get('href'))
                     bs_link_to_notices = list(map(
-                        lambda x: HOME_URL + x.replace("https://www.emol.com", ""), bs_link_to_notices))
+                        lambda x: HOME_URL + x.replace(HOME_URL, ""), bs_link_to_notices))
 
             today = datetime.date.today().strftime('%d-%m-%Y')
             create_folders(today)
