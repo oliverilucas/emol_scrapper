@@ -25,7 +25,7 @@ bs_link_to_notices = []
 
 #2
 #Accedemos a las noticias
-def parse_notice(link, today, i, k):
+def scrapper(link, today, i, k):
     try:
         response = requests.get(link)
         if response.status_code == 200:
@@ -72,9 +72,8 @@ def parse_notice(link, today, i, k):
 
 #1
 #Función para extraer el link de las noticias
-def parse_home():
+def get_links():
     try:
-        #Accede la página web. Devolverá 200 si se conecta correctamente.
         response = requests.get(HOME_URL)
         if response.status_code == 200:
             bs_link_to_notices = []
@@ -96,13 +95,13 @@ def parse_home():
                 os.mkdir(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today)
             
             for link in range(0, len(bs_link_to_notices)-1):
-                parse_notice(bs_link_to_notices[link], today, len(bs_link_to_notices), link)
+                scrapper(bs_link_to_notices[link], today, len(bs_link_to_notices), link)
 
     except ValueError as ve:
         print(ve)
     
 def run():
-    parse_home()
+    get_links()
 
 if __name__ == '__main__':
     run()
