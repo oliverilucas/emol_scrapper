@@ -19,6 +19,11 @@ XPATH_SUMMARY = '//div/h2/text()'
 XPATH_BODY = "/html/body[@class='cont_fs_gale_f']/div[@id='contentenedor']/div[@id='LadoA']/div[@id='cont_iz_creditos']/div[@id='cont_iz_cuerpo']/div[@id='texto_noticia']/div[@id='cuDetalle_cuTexto_textoNoticia']/div//text()"
 link_to_notices = []
 
+#BS_COMMANDS
+BS_LINKS_TO_ARTICLE = ["h1 a", "h3 a"]
+bs_link_to_notices = []
+
+#2
 #Accedemos a las noticias
 def parse_notice(link, today, i, k):
     try:
@@ -65,32 +70,34 @@ def parse_notice(link, today, i, k):
     except ConnectionError as con:
         pass
 
+#1
 #Función para extraer el link de las noticias
 def parse_home():
     try:
         #Accede la página web. Devolverá 200 si se conecta correctamente.
         response = requests.get(HOME_URL)
         if response.status_code == 200:
-            #Obtiene el código fuente de la página accedida.
-            home = response.content.decode('utf-8')
-            #Toma el contenido HTML y lo transforma en un documento especial donde puedo hacer XPath
-            parsed = html.fromstring(home)
-            #Obtengo una lista de todos las HTTP de las noticias
-            link_to_notices = parsed.xpath(XPATH_LINK_TO_ARTICLE)
-            link_to_notices = list(map(lambda x: HOME_URL + x.replace("https://www.emol.com", ""), link_to_notices))
-            # Crea una carpeta con el nombre del día
+            bs_link_to_notices = []
+            response = requests.get(HOME_URL)
+            soup = bs4.BeautifulSoup(response.text, 'html.parser')
+            for i in range(0, len(BS_LINKS_TO_ARTICLE)):
+                for link in soup.select(BS_LINKS_TO_ARTICLE[i]):
+                    bs_link_to_notices.append(link.get('href'))
+                    bs_link_to_notices = list(map(lambda x: HOME_URL + x.replace("https://www.emol.com", ""), bs_link_to_notices))
+                
+            for notice in bs_link_to_notices:
+                print(notice)
+
+            #Construye las carpetas
             today = datetime.date.today().strftime('%d-%m-%Y')
-            #Verifica si existe la carpeta de origen:
             if not os.path.isdir('news'):
                 os.mkdir('news')
-            #Verifica si existe la carpeta con el nombre del día:
             if not os.path.isdir(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today):
                 os.mkdir(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today)
-            for link in range(0, len(link_to_notices)-1):
-                parse_notice(link_to_notices[link], today, len(link_to_notices), link)
-        else:
-            #Elevamos un error si la página no contesta
-            raise ValueError(f'Error: {response.status_code}')
+            
+            for link in range(0, len(bs_link_to_notices)-1):
+                parse_notice(bs_link_to_notices[link], today, len(bs_link_to_notices), link)
+
     except ValueError as ve:
         print(ve)
     
