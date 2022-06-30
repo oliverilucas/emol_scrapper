@@ -2,6 +2,7 @@ import os
 import datetime
 import requests
 import bs4
+from make_csv import make_csv
 
 HOME_URL = 'https://www.emol.com'
 BS_LINKS_TO_ARTICLE = ["h1 a", "h3 a"]
@@ -52,6 +53,7 @@ def scrapper(link, today, i, k):
             print(f"(!) Esta noticia ya está guardada en el directorio.\n\n")
         else:
             write_file(today, title, summary, body, file_name)
+            make_csv(title,summary,body,today,link)
     else:
         raise ValueError(f'Error: {response.status_code}')
 
