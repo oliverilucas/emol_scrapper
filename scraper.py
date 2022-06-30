@@ -9,9 +9,14 @@ BS_TITLE = 'div h1'
 BS_SUMMARY = 'h2[id=cuDetalle_cuTitular_bajadaNoticia]'
 BS_BODY = 'div div[id=cuDetalle_cuTexto_textoNoticia]'
 
+def quita_comas(object):
+    quita_comas = object.replace(",", "")
+    return quita_comas
+    
 def get_text(soup, object):
     for paragraph in soup.select(object):
         var = paragraph.get_text()
+        var = quita_comas(var)
     return var
 
 def file_name_cleaner(title):
