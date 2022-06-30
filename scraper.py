@@ -2,6 +2,7 @@ import os
 import datetime
 import requests
 import bs4
+import argparse
 
 HOME_URL = 'https://www.emol.com'
 BS_LINKS_TO_ARTICLE = ["h1 a", "h3 a"]
@@ -82,5 +83,8 @@ def get_links():
 def run():
     get_links()
 
+
+
 if __name__ == '__main__':
+
     run()
