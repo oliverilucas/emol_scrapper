@@ -35,19 +35,14 @@ def scrapper(link, today, i, k):
     response = requests.get(link)
     if response.status_code == 200:
         soup = bs4.BeautifulSoup(response.text, 'html.parser')
-
-        # Obtiene título, resumen y cuerpo de la noticia
+        
         title = get_text(soup, BS_TITLE)
         summary = get_text(soup, BS_SUMMARY)
         body = get_text(soup, BS_BODY)
-
-        # Quita caracteres especiales del título
         file_name = file_name_cleaner(title)
 
-        #Panel de información
         print(f"Descargando noticia {k+1} de {i-1} ({round((k+1)/(i-1)*100,1)}% completado): \n {title} \n ({link})")
 
-        #Verifica si la noticia ya está en el directorio
         if os.path.isfile(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today + "/" + title + ".txt"):
             print(f"(!) Esta noticia ya está guardada en el directorio.\n\n")
         else:
@@ -55,8 +50,6 @@ def scrapper(link, today, i, k):
     else:
         raise ValueError(f'Error: {response.status_code}')
 
-
-# Si no existen, crea las carpetas necesarias
 def create_folders(today):
     if not os.path.isdir('news'):
         os.mkdir('news')
