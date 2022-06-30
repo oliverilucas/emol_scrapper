@@ -1,52 +1,54 @@
 # Scrapping de emol.com
 ## Introducción
-Este proyecto está optimizado para realizar scrapping de noticias del portal [El Mercurio](https://www.emol.com/), sin embargo, si se hacen los cambios adecuados, el script puede ser usado para cualquier portal de noticias.
+El script descarga todas las noticias que se encuentren en la portada del periódico [El Mercurio](https://www.emol.com/). Sin embargo, si se modifican las etiquetas HTML de las variables globales, el script está optimizado para hacer scrapping en cualquier portal de noticias.
+
+## Variables
+
+El script cuenta con 5 variables globales para su funcionamiento:
+
+- ***HOME_URL*** - *Type: String*: Corresponde al link HTML del portal de noticias al que pretendemos hacer scrapping.
+
+- ***BS_LINKS_TO_ARTICLE*** - *Type: List*:  Elemento que contiene el atributo *<href>* que contienen las direcciones HTTP de las noticias del portal.
+- **BS_TITLE** - *Type: String*: Atributo que contienen los titulares de las noticias.
+- **BS_SUMMARY** - *Type: String*: Atributo que contienen el resumen o bajada de las noticias.
+- **BS_BODY** - *Type: String*: Atributo que contienen el cuerpo de las noticias.
 
 ## Requerimientos
-IDE:
-- Python 3 o superior.
+### IDE:
+  - Python 3 o superior.
   
-Librerías necesarias para scrapping:
-- **request**
-- **lxml**
-- **autopep8**
+### Librerías necesarias para scrapping:
+  - **request**
+  - **bs4**
 
-Recomiendo utilizar estas extensiones de Chrome que nos ayudarán mucho a la hora de obtener los distintos *path*:
-- [XPath Helper](https://chrome.google.com/webstore/detail/xpath-helper/hgimnogjllphhhkhlmebbmlgjoejdpjl): herramienta que nos entrega el *path* en XPath de todos los elementos por los cuales pasemos el mouse por encima.
-- [SelectorGadget](https://chrome.google.com/webstore/detail/selectorgadget/mhjhnkcfbdhnjickkkdbjoemdmbfginb/related?hl=es): esta herramienta nos entregará las etiquetas finales del *path* donde se encuentre algun determinado elemento que busquemos.
+### Otras librerías:
+  - **datetime**
+  - **os**
 
-## Pasos para hacer scrapping
+Si tienes problemas a la hora de leer código HTML, te recomiendo estas extensiones que facilitan la obtención de etiquetas, atributos y nodos:
+- [XPath Helper](https://chrome.google.com/webstore/detail/xpath-helper/hgimnogjllphhhkhlmebbmlgjoejdpjl): herramienta que nos entrega la ruta completa y el contenido de todos los elementos que seleccionemos.
+- [SelectorGadget](https://chrome.google.com/webstore/detail/selectorgadget/mhjhnkcfbdhnjickkkdbjoemdmbfginb/related?hl=es): esta herramienta nos entregará las etiquetas donde se encuentre algun determinado elemento que busquemos.
 
-Usaremos como ejemplo el portal de noticias [El Mercurio](https://www.emol.com/) (emol).
+## Funciones principales
 
-### **Paso 1: Obtener las rutas de cada noticia**
-El primer paso es conseguir las rutas o *path* de todos los enlaces HTML de las noticias del portal. Luego, habrá que obtener los *path* para el título, el resumen y el cuerpo de cada noticia. 
+### **get_links()**
+- Extrae los links de las noticias. 
 
+- Crea una lista *bs_link_to_notices* la cual almacena todas las direcciones HTML dictadas según la variable global *BS_LINKS_TO_ARTICLE*.
+- Cuenta con una función de orden superior que modifica ciertos HTML que vienen incompletos. Puede ocurrir que tus direcciones HTML vengan de la siguiente forma:
+  ```python
+  /noticias/nacional/fecha/link
+  ```
+  La función deja los HTML completos:
+  ```python
+  https://www.emol.com/noticias/nacional/fecha/link
+  ```
+- Llama a la función *create_folders* y *scrapper*.
 
-**Para obtener los enlaces HTML**, usamos SelectorGadget el cual nos indica que el HTML de los titulares se encuentra en (/h2/a). Para obtener los enlaces de todas las páginas agregamos *@href*, el cual nos entregará todas las HTML en esa determinada carpeta:
-```java
-$x('//h1/a/@href').map(x=>x.value)
-$x('//h3/a/@href').map(x=>x.value)
-```
+### **scraper()**
+- Para cada dirección HTML almacenada en la lista *bs_link_to_notices* extrae el título, resumen y cuerpo según lo declarado en las variables globales: *BS_TITLE*, *BS_SUMMARY* y *BS_BODY* a través de la función *get_text()*.
+- Verifica que el nombre del archivo de texto a guardar en el directorio no tenga caracteres especiales a travésde la función *file_name_cleaner*. Por cierto, el archivo llevará como nombre el titular de la noticia.
+- Finalmente, escribe el documento de texto a través de la función *write_file*.
 
-**Para obtener el título**, hacemos exactamente lo mismo:
-```java
-$x('//div/h1/text()').map(x=>x.wholeText)
-```
-
-**Para obtener resumen**:
-```java
-$x('//div/h2/text()').map(x=>x.wholeText)
-```
-
-**Para obtener cuerpo de noticia**, utilizaremos la raíz que nos entrega XPath Helper, puesto que la cantidad de parrafos que componen el cuerpo de la noticia hacen más sencilla esta herramienta :
-```java
-$x("/html/body[@class='cont_fs_gale_f']/div[@id='contentenedor']/div[@id='LadoA']/div[@id='cont_iz_creditos']/div[@id='cont_iz_cuerpo']/div[@id='texto_noticia']/div[@id='cuDetalle_cuTexto_textoNoticia']/div//text()").map(x => x.wholeText)
-```
-Para confirmar que nuestros comandos están correctos, accedemos a la consola de nuestro navegador (puedes acceder a ella presionando *Ctrl+F12*) y vemos si cada uno de los *path* encontrados nos devuelve como output el scrapping que estamos buscando.
-
-### **Paso 2: Sustituye los path**
-Para ejecutar el programa como corresponde, sustituye el path en las constantes del archivo *scraper.py*.
-
-# Créditos
+## Créditos
 * [Lucas Oliveri](https://www.linkedin.com/in/oliverilucas) - (oliverilucas@gmail.com)

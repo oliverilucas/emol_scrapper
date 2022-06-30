@@ -63,13 +63,13 @@ def create_folders(today):
     if not os.path.isdir(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today):
         os.mkdir(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today)
 
-# Extrae los links de las noticias
 def get_links():
     try:
         response = requests.get(HOME_URL)
         if response.status_code == 200:
             bs_link_to_notices = []
             soup = bs4.BeautifulSoup(response.text, 'html.parser')
+            
             for i in range(0, len(BS_LINKS_TO_ARTICLE)):
                 for link in soup.select(BS_LINKS_TO_ARTICLE[i]):
                     bs_link_to_notices.append(link.get('href'))
