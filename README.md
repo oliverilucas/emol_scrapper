@@ -36,11 +36,11 @@ Si tienes problemas a la hora de leer código HTML, te recomiendo estas extensio
 
 - Crea una lista *bs_link_to_notices* la cual almacena todas las direcciones HTML dictadas según la variable global *BS_LINKS_TO_ARTICLE*.
 - Cuenta con una función de orden superior que modifica ciertos HTML que vienen incompletos. Puede ocurrir que tus direcciones HTML vengan de la siguiente forma:
-  ```python
+  ```HTML
   /noticias/nacional/fecha/link
   ```
   La función deja los HTML completos:
-  ```python
+  ```HTML
   https://www.emol.com/noticias/nacional/fecha/link
   ```
 - Llama a la función *create_folders* y *scrapper*.
