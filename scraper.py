@@ -2,7 +2,6 @@ import os
 import datetime
 import requests
 import bs4
-from make_csv import make_csv
 
 HOME_URL = 'https://www.emol.com'
 BS_LINKS_TO_ARTICLE = ["h1 a", "h3 a"]
@@ -10,14 +9,9 @@ BS_TITLE = 'div h1'
 BS_SUMMARY = 'h2[id=cuDetalle_cuTitular_bajadaNoticia]'
 BS_BODY = 'div div[id=cuDetalle_cuTexto_textoNoticia]'
 
-def quita_comas(object):
-    quita_comas = object.replace(",", "")
-    return quita_comas
-    
 def get_text(soup, object):
     for paragraph in soup.select(object):
         var = paragraph.get_text()
-        var = quita_comas(var)
     return var
 
 def file_name_cleaner(title):
@@ -53,7 +47,6 @@ def scrapper(link, today, i, k):
             print(f"(!) Esta noticia ya está guardada en el directorio.\n\n")
         else:
             write_file(today, title, summary, body, file_name)
-            make_csv(title,summary,body,today,link)
     else:
         raise ValueError(f'Error: {response.status_code}')
 
