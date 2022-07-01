@@ -34,22 +34,28 @@ def write_file(today, title, summary, body, file_name, link):
         make_csv(title, summary, body, today, link)
 
 def scrapper(link, today, i, k):
-    response = requests.get(link)
-    if response.status_code == 200:
-        soup = bs4.BeautifulSoup(response.text, 'html.parser')
-        title = get_text(soup, BS_TITLE)
-        summary = get_text(soup, BS_SUMMARY)
-        body = get_text(soup, BS_BODY)
-        file_name = file_name_cleaner(title)
+    try:
+        response = requests.get(link)
+        print(response)
+        if response.status_code == 200:
+            soup = bs4.BeautifulSoup(response.text, 'html.parser')
+            title = get_text(soup, BS_TITLE)
+            summary = get_text(soup, BS_SUMMARY)
+            body = get_text(soup, BS_BODY)
+            file_name = file_name_cleaner(title)
 
-        print(f"Descargando noticia {k+1} de {i-1} ({round((k+1)/(i-1)*100,1)}% completado): \n {title} \n ({link})")
+            print(f"Descargando noticia {k+1} de {i-1} ({round((k+1)/(i-1)*100,1)}% completado): \n {title} \n ({link})")
 
-        if os.path.isfile(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today + "/" + title + ".txt"):
-            print(f"(!) Esta noticia ya está guardada en el directorio.\n\n")
+            if os.path.isfile(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today + "/" + title + ".txt"):
+                print(f"(!) Esta noticia ya está guardada en el directorio.\n\n")
+            else:
+                write_file(today, title, summary, body, file_name, link)
         else:
-            write_file(today, title, summary, body, file_name, link)
-    else:
-        raise ValueError(f'Error: {response.status_code}')
+            pass
+            #raise ValueError(f'Error: {response.status_code}')
+    except ConnectionError:
+        pass
+    
 
 def create_folders(today):
     if not os.path.isdir('news'):
@@ -68,7 +74,7 @@ def get_links():
                 for link in soup.select(BS_LINKS_TO_ARTICLE[i]):
                     bs_link_to_notices.append(link.get('href'))
                     bs_link_to_notices = list(map(
-                        lambda x: HOME_URL + x.replace(HOME_URL, ""), bs_link_to_notices))
+                        lambda x: HOME_URL + x.replace(HOME_URL, "").replace(" ", ""), bs_link_to_notices))
 
             today = datetime.date.today().strftime('%d-%m-%Y')
             create_folders(today)
@@ -79,6 +85,9 @@ def get_links():
 
     except ValueError as ve:
         print(ve)
+    except ConnectionError as ve:
+        print(ve)
+        pass
 
 def run():
     get_links()
