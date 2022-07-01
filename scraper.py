@@ -2,6 +2,7 @@ import os
 import datetime
 import requests
 import bs4
+from make_csv import make_csv
 
 HOME_URL = 'https://www.emol.com'
 BS_LINKS_TO_ARTICLE = ["h1 a", "h3 a"]
@@ -21,7 +22,7 @@ def file_name_cleaner(title):
     file_name = title.replace('/', '-')
     return file_name
 
-def write_file(today, title, summary, body, file_name):
+def write_file(today, title, summary, body, file_name, link):
     print("\n")
     with open(f'news/{today}/{file_name}.txt', 'w', encoding='utf-8') as f:
         f.write(title)
@@ -30,12 +31,12 @@ def write_file(today, title, summary, body, file_name):
         f.write('\n\n')
         f.write(body)
         f.write('\n\n')
+        make_csv(title, summary, body, today, link)
 
 def scrapper(link, today, i, k):
     response = requests.get(link)
     if response.status_code == 200:
         soup = bs4.BeautifulSoup(response.text, 'html.parser')
-        
         title = get_text(soup, BS_TITLE)
         summary = get_text(soup, BS_SUMMARY)
         body = get_text(soup, BS_BODY)
@@ -46,7 +47,7 @@ def scrapper(link, today, i, k):
         if os.path.isfile(os.path.dirname(os.path.abspath(__file__)) + "/news/" + today + "/" + title + ".txt"):
             print(f"(!) Esta noticia ya está guardada en el directorio.\n\n")
         else:
-            write_file(today, title, summary, body, file_name)
+            write_file(today, title, summary, body, file_name, link)
     else:
         raise ValueError(f'Error: {response.status_code}')
 
