@@ -1,5 +1,4 @@
 import csv
-import pandas as pd
 from os.path import exists
 
 def make_csv(title,summary,body,today,link):
